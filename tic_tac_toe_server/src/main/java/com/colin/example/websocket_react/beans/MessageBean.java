@@ -2,22 +2,13 @@ package com.colin.example.websocket_react.beans;
 
 public class MessageBean {
 
-    private String name;
-    private String message;
+    private String player;
 
-    public String getName() {
-        return name;
+    public String getPlayer() {
+        return player;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+    public void setPlayer(String player) {
+        this.player = player;
     }
 }

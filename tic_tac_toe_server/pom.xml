@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.colin.example</groupId>
-	<artifactId>websocket_react</artifactId>
+	<artifactId>tic_tac_toe_server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>websocket_react</name>
-	<description>tutorial building react chat app with spring boot server</description>
+	<name>tic_tac_toe_server</name>
+	<description>Spring server for tic-tac-toe game</description>
 
 	<properties>
 		<java.version>1.8</java.version>
