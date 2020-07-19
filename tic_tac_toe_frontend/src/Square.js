@@ -1,13 +1,11 @@
-import React, {useState} from 'react';
+import React from 'react';
 import './index.css';
 
-const Square = ({value}) => {
-
-  const [displayValue, setDisplayValue] = useState(null);
+const Square = ({value, onSquareClick}) => {
   
   return ( 
-    <button className = "square" onClick={() => setDisplayValue("X")}> 
-      {displayValue} 
+    <button className = "square" onClick={onSquareClick}> 
+      {value} 
     </button>
   );
     
