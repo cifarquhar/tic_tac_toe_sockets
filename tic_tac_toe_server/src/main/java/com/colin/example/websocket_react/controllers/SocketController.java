@@ -2,6 +2,8 @@ package com.colin.example.websocket_react.controllers;
 
 import com.colin.example.websocket_react.beans.ConnectionBean;
 import com.colin.example.websocket_react.beans.MessageBean;
+import com.colin.example.websocket_react.beans.UserTracker;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -13,6 +15,9 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 @Controller
 public class SocketController {
 
+    @Autowired
+    UserTracker userTracker;
+
     @MessageMapping("/user-all")
     @SendTo("/topic/user")
     public MessageBean send(@Payload MessageBean message){
@@ -22,27 +27,28 @@ public class SocketController {
         String nextPlayer = message.getPlayer().equals("X") ? "O" : "X";
 
         response.setPlayer(nextPlayer);
+        response.setPlayerNumber(userTracker.getUserCount());
 
         return response;
 
     }
 
     @EventListener(SessionConnectEvent.class)
-    public ConnectionBean handleConnection(SessionConnectEvent event){
+    public void handleConnection(SessionConnectEvent event){
         System.out.println("Received new connection from: " + event.getSource());
 
-        ConnectionBean response = new ConnectionBean("You're connected!");
+        userTracker.addUser();
 
-        return response;
+        System.out.println("Connected users: " + userTracker.getUserCount());
     }
 
     @EventListener(SessionDisconnectEvent.class)
-    public ConnectionBean handleDisconnection(SessionDisconnectEvent event){
+    public void handleDisconnection(SessionDisconnectEvent event){
         System.out.println("Session closed: " + event.getSource());
 
-        ConnectionBean response = new ConnectionBean("Disconnected... bye!");
+        userTracker.removeUser();
 
-        return response;
+        System.out.println("Connected users: " + userTracker.getUserCount());
     }
 
 }
