@@ -7,12 +7,12 @@ public class UserTracker {
 
     private int userCount;
 
-//    public UserTracker(int userCount) {
-//        this.userCount = userCount;
-//    }
-//
-//    public UserTracker() {
-//    }
+    public UserTracker(int userCount) {
+        this.userCount = userCount;
+    }
+
+    public UserTracker() {
+    }
 
     public int getUserCount() {
         return userCount;

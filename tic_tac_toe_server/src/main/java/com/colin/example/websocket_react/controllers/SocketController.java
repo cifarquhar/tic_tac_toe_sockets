@@ -12,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.List;
+
 @Controller
 public class SocketController {
 
@@ -26,11 +28,24 @@ public class SocketController {
 
         String nextPlayer = message.getPlayer().equals("X") ? "O" : "X";
 
+        response.setType("turn");
         response.setPlayer(nextPlayer);
         response.setPlayerNumber(userTracker.getUserCount());
+        response.setIndexToUpdate(message.getIndexToUpdate());
 
         return response;
 
+    }
+
+    @MessageMapping("/register-player")
+    @SendTo("/topic/user")
+    public ConnectionBean register(){
+        ConnectionBean connectionBean = new ConnectionBean();
+
+        connectionBean.setType("registration");
+        connectionBean.setPlayerNumber(userTracker.getUserCount());
+
+        return connectionBean;
     }
 
     @EventListener(SessionConnectEvent.class)

@@ -6,7 +6,8 @@ import SockJsClient from 'react-stomp';
 const Game = () => {
 
   const [squares, setSquares] = useState(Array(9).fill(null));
-  const [xNextTurn, setXNextTurn] = useState(true);
+  const [playerLetter, setPlayerLetter] = useState(null);
+  const [currentTurn, setCurrentTurn] = useState(false);
   const socketClient = useRef(null);
 
   const calculateWinner = (gameState) => {
@@ -33,23 +34,49 @@ const Game = () => {
 
   const winner = calculateWinner(squares);
 
-  const status = winner ? `Winner: ${winner}` : `Next player: ${xNextTurn ? "X" : "O"}`
+  const status = winner ? `Winner: ${winner}` : `${currentTurn ? "It's your turn!" : "Waiting for opponent..."}`
 
-  const sendMessage = () => {
+  const sendMessage = (clickedSquareIndex) => {
     const message = {
-      player: `${xNextTurn ? "X" : "O"}`
+      player: `${playerLetter}`,
+      indexToUpdate: `${clickedSquareIndex}`
     }
     socketClient.current.sendMessage('/app/user-all', JSON.stringify(message));
   }
 
+  const registerPlayer = () => {
+    socketClient.current.sendMessage('/app/register-player');
+  }
+
   const handleClick = (i) => {
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares) || squares[i] || !currentTurn) {
       return;
     }
     const updatedSquares = [...squares];
-    updatedSquares[i] = xNextTurn ? "X" : "O";
+    updatedSquares[i] = playerLetter;
     setSquares(updatedSquares);
-    sendMessage();
+    sendMessage(i);
+  }
+
+  const handleServerResponse = (message) => {
+    switch (message.type) {
+      case "registration":
+        if (message.playerNumber === 1) {
+          setPlayerLetter("X");
+          setCurrentTurn(true);
+        }
+        else if (message.playerNumber === 2 && !playerLetter) {
+          setPlayerLetter("O");
+        }
+        break;
+      case "turn":
+        const updatedSquares = [...squares];
+        updatedSquares[message.indexToUpdate] = message.player === "X" ? "O" : "X";
+        setSquares(updatedSquares);
+        setCurrentTurn(playerLetter === message.player);
+      default:
+        break;
+    }
   }
 
 
@@ -67,15 +94,16 @@ const Game = () => {
       <SockJsClient 
         url="http://localhost:8080/websocket-game/"
         topics={["/topic/user"]}
-        onConnect={(response) => {
-          console.log(response);
+        onConnect={() => {
+          registerPlayer();
         }}
         onDisconnect={(response) => {
           console.log(response);
         }}
         onMessage={(msg) => {
           console.log("response:", msg);
-          setXNextTurn(msg.player === "X");
+          // setXNextTurn(msg.player === "X");
+          handleServerResponse(msg);
         }}
         ref={socketClient}
       />

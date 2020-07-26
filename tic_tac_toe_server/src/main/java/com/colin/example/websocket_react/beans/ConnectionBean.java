@@ -2,20 +2,22 @@ package com.colin.example.websocket_react.beans;
 
 public class ConnectionBean {
 
-    private String message;
+    String type;
+    int playerNumber;
 
-    public ConnectionBean(String message) {
-        this.message = message;
+    public String getType() {
+        return type;
     }
 
-    public ConnectionBean() {
+    public void setType(String type) {
+        this.type = type;
     }
 
-    public String getMessage() {
-        return message;
+    public int getPlayerNumber() {
+        return playerNumber;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setPlayerNumber(int playerNumber) {
+        this.playerNumber = playerNumber;
     }
 }
