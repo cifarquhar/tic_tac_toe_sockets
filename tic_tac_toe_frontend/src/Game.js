@@ -74,6 +74,7 @@ const Game = () => {
         updatedSquares[message.indexToUpdate] = message.player === "X" ? "O" : "X";
         setSquares(updatedSquares);
         setCurrentTurn(playerLetter === message.player);
+        break;
       default:
         break;
     }
